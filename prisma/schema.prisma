@@ -1,0 +1,397 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Multi-tenant Core ────────────────────────────────────────────────────────
+
+model Company {
+  id               String   @id @default(cuid())
+  clerkOrgId       String   @unique
+  name             String
+  nameAlbanian     String?
+  slug             String   @unique
+  logoUrl          String?
+  hqCity           String
+  hqAddress        String?
+  numberOfStores   Int      @default(1)
+  annualRevenue    Float?
+  currency         String   @default("EUR")
+  country          String   @default("XK")
+  timezone         String   @default("Europe/Skopje")
+  subscriptionTier String   @default("pro")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  stores               Store[]
+  users                CompanyUser[]
+  products             Product[]
+  competitorLinks      CompanyCompetitor[]
+  priceRecommendations PriceRecommendation[]
+  marginAlerts         MarginAlert[]
+  auditLogs            AuditLog[]
+
+  @@map("companies")
+}
+
+model CompanyUser {
+  id          String   @id @default(cuid())
+  clerkUserId String
+  companyId   String
+  role        UserRole @default(VIEWER)
+  name        String
+  email       String
+  avatarUrl   String?
+  createdAt   DateTime @default(now())
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@unique([clerkUserId, companyId])
+  @@map("company_users")
+}
+
+enum UserRole {
+  ADMIN
+  PRICING_MANAGER
+  REGIONAL_MANAGER
+  ANALYST
+  VIEWER
+}
+
+// ─── Store Network ─────────────────────────────────────────────────────────────
+
+model Store {
+  id           String       @id @default(cuid())
+  companyId    String
+  name         String
+  city         String
+  region       KosovoRegion
+  address      String?
+  storeType    StoreType    @default(SUPERMARKET)
+  salesFloorM2 Float?
+  isActive     Boolean      @default(true)
+  latitude     Float?
+  longitude    Float?
+  managerId    String?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  company     Company        @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  pricePoints ProductPrice[]
+
+  @@map("stores")
+}
+
+enum KosovoRegion {
+  PRISHTINA
+  PRIZREN
+  FERIZAJ
+  PEJA
+  GJAKOVA
+  GJILAN
+  MITROVICA
+  VUSHTRRI
+  LIPJAN
+  SUHAREKA
+  RAHOVEC
+  MALISHEVA
+  KAMENICA
+  VITI
+  DECAN
+  ISTOG
+  KLINE
+  SKENDERAJ
+}
+
+enum StoreType {
+  SUPERMARKET
+  HYPERMARKET
+  DISCOUNT
+  WHOLESALE
+  CONVENIENCE
+  SPECIALTY
+}
+
+// ─── Product Catalog ──────────────────────────────────────────────────────────
+
+model Product {
+  id             String          @id @default(cuid())
+  companyId      String
+  sku            String
+  barcode        String?
+  name           String
+  nameAlbanian   String?
+  brand          String?
+  category       ProductCategory
+  subcategory    String?
+  unit           String          @default("piece")
+  unitSize       Float?
+  unitLabel      String?
+  cogs           Float
+  currentPrice   Float
+  currentMargin  Float
+  minMargin      Float           @default(2.0)
+  maxMargin      Float           @default(40.0)
+  isActive       Boolean         @default(true)
+  imageUrl       String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  company            Company               @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  pricePoints        ProductPrice[]
+  competitorMappings CompetitorProductMap[]
+  recommendations    PriceRecommendation[]
+  alerts             MarginAlert[]
+
+  @@unique([companyId, sku])
+  @@map("products")
+}
+
+enum ProductCategory {
+  BEVERAGES
+  DAIRY
+  MEAT_POULTRY
+  FRUITS_VEGETABLES
+  BAKERY
+  FROZEN
+  SNACKS_CONFECTIONERY
+  PERSONAL_CARE
+  HOUSEHOLD
+  BABY
+  PET
+  ALCOHOL
+  TOBACCO
+  DELI
+  CANNED_GOODS
+  PASTA_GRAINS
+  OILS_FATS
+  CONDIMENTS
+  COFFEE_TEA
+  CLEANING
+}
+
+model ProductPrice {
+  id         String    @id @default(cuid())
+  productId  String
+  storeId    String?
+  price      Float
+  cogs       Float
+  margin     Float
+  recordedAt DateTime  @default(now())
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  store   Store?  @relation(fields: [storeId], references: [id])
+
+  @@index([productId, recordedAt])
+  @@map("product_prices")
+}
+
+// ─── Competitors ──────────────────────────────────────────────────────────────
+
+model Competitor {
+  id              String  @id @default(cuid())
+  name            String  @unique
+  nameAlbanian    String?
+  slug            String  @unique
+  logoUrl         String?
+  websiteUrl      String?
+  hqCity          String
+  numberOfStores  Int     @default(1)
+  pricingStrategy String?
+  description     String?
+  isActive        Boolean @default(true)
+  createdAt       DateTime @default(now())
+
+  companyLinks CompanyCompetitor[]
+  products     CompetitorProduct[]
+
+  @@map("competitors")
+}
+
+model CompanyCompetitor {
+  id           String   @id @default(cuid())
+  companyId    String
+  competitorId String
+  isTracked    Boolean  @default(true)
+  addedAt      DateTime @default(now())
+
+  company    Company    @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  competitor Competitor @relation(fields: [competitorId], references: [id])
+
+  @@unique([companyId, competitorId])
+  @@map("company_competitors")
+}
+
+model CompetitorProduct {
+  id           String          @id @default(cuid())
+  competitorId String
+  name         String
+  brand        String?
+  category     ProductCategory
+  sku          String?
+  barcode      String?
+  unit         String          @default("piece")
+  unitSize     Float?
+  unitLabel    String?
+  isAvailable  Boolean         @default(true)
+  lastSeenAt   DateTime        @default(now())
+  createdAt    DateTime        @default(now())
+
+  competitor Competitor           @relation(fields: [competitorId], references: [id], onDelete: Cascade)
+  prices     CompetitorPrice[]
+  mappings   CompetitorProductMap[]
+
+  @@unique([competitorId, name])
+  @@map("competitor_products")
+}
+
+model CompetitorPrice {
+  id                  String        @id @default(cuid())
+  competitorProductId String
+  region              KosovoRegion?
+  price               Float
+  promotionalPrice    Float?
+  isOnPromotion       Boolean       @default(false)
+  isInStock           Boolean       @default(true)
+  source              PriceSource   @default(MANUAL)
+  sourceUrl           String?
+  recordedAt          DateTime      @default(now())
+
+  competitorProduct CompetitorProduct @relation(fields: [competitorProductId], references: [id], onDelete: Cascade)
+
+  @@index([competitorProductId, recordedAt])
+  @@map("competitor_prices")
+}
+
+enum PriceSource {
+  MANUAL
+  CSV_UPLOAD
+  WEB_SCRAPE
+  API
+  FLYER_SCAN
+}
+
+model CompetitorProductMap {
+  id                  String   @id @default(cuid())
+  productId           String
+  competitorProductId String
+  matchConfidence     Float    @default(1.0)
+  isVerified          Boolean  @default(false)
+  createdAt           DateTime @default(now())
+
+  product           Product           @relation(fields: [productId], references: [id], onDelete: Cascade)
+  competitorProduct CompetitorProduct @relation(fields: [competitorProductId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, competitorProductId])
+  @@map("competitor_product_maps")
+}
+
+// ─── Margin Optimization Engine ───────────────────────────────────────────────
+
+model PriceRecommendation {
+  id                   String               @id @default(cuid())
+  companyId            String
+  productId            String
+  region               KosovoRegion?
+  currentPrice         Float
+  currentMargin        Float
+  recommendedPrice     Float
+  recommendedMargin    Float
+  confidenceScore      Float
+  expectedRevenueDelta Float
+  rationale            String
+  rationaleAlbanian    String?
+  competitorMinPrice   Float?
+  competitorMaxPrice   Float?
+  competitorAvgPrice   Float?
+  status               RecommendationStatus @default(PENDING)
+  appliedAt            DateTime?
+  appliedBy            String?
+  dismissedAt          DateTime?
+  dismissedBy          String?
+  dismissReason        String?
+  expiresAt            DateTime
+  createdAt            DateTime             @default(now())
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([companyId, status])
+  @@map("price_recommendations")
+}
+
+enum RecommendationStatus {
+  PENDING
+  APPLIED
+  DISMISSED
+  EXPIRED
+}
+
+// ─── Alerts ───────────────────────────────────────────────────────────────────
+
+model MarginAlert {
+  id                  String        @id @default(cuid())
+  companyId           String
+  productId           String?
+  alertType           AlertType
+  severity            AlertSeverity @default(MEDIUM)
+  title               String
+  titleAlbanian       String?
+  description         String
+  descriptionAlbanian String?
+  metadata            Json?
+  isRead              Boolean       @default(false)
+  readAt              DateTime?
+  readBy              String?
+  createdAt           DateTime      @default(now())
+
+  company Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  product Product? @relation(fields: [productId], references: [id])
+
+  @@index([companyId, isRead])
+  @@map("margin_alerts")
+}
+
+enum AlertType {
+  PRICE_SPIKE
+  PRICE_DROP
+  COMPETITOR_OUT_OF_STOCK
+  MARGIN_OPPORTUNITY
+  MARGIN_RISK
+  REGIONAL_INCONSISTENCY
+  WEEKLY_SUMMARY
+  COMPETITOR_STRATEGY_CHANGE
+}
+
+enum AlertSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+// ─── Audit Log ────────────────────────────────────────────────────────────────
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  companyId  String
+  userId     String
+  userName   String
+  action     String
+  entityType String
+  entityId   String?
+  oldValue   Json?
+  newValue   Json?
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId, createdAt])
+  @@map("audit_logs")
+}
