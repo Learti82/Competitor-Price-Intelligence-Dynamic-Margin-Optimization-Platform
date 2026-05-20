@@ -34,6 +34,8 @@ model Company {
   priceRecommendations PriceRecommendation[]
   marginAlerts         MarginAlert[]
   auditLogs            AuditLog[]
+  pricingRules         PricingRule[]
+  promotions           Promotion[]
 
   @@map("companies")
 }
@@ -146,6 +148,8 @@ model Product {
   competitorMappings CompetitorProductMap[]
   recommendations    PriceRecommendation[]
   alerts             MarginAlert[]
+  pricingRules       PricingRule[]
+  promotions         Promotion[]
 
   @@unique([companyId, sku])
   @@map("products")
@@ -386,6 +390,7 @@ model AuditLog {
   entityId   String?
   oldValue   Json?
   newValue   Json?
+  reason     String?
   ipAddress  String?
   userAgent  String?
   createdAt  DateTime @default(now())
@@ -394,4 +399,62 @@ model AuditLog {
 
   @@index([companyId, createdAt])
   @@map("audit_logs")
+}
+
+// ─── Pricing Rules Engine ─────────────────────────────────────────────────────
+
+model PricingRule {
+  id              String           @id @default(cuid())
+  companyId       String
+  name            String
+  description     String?
+  ruleType        PricingRuleType
+  category        ProductCategory?
+  targetProductId String?
+  competitorId    String?
+  operator        String           @default("BELOW")
+  value           Float
+  valueType       String           @default("PERCENTAGE")
+  minMargin       Float?
+  maxMargin       Float?
+  isActive        Boolean          @default(true)
+  priority        Int              @default(0)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  company Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  product Product?  @relation(fields: [targetProductId], references: [id])
+
+  @@map("pricing_rules")
+}
+
+enum PricingRuleType {
+  COMPETITOR_BASED
+  MARGIN_PROTECTION
+  CATEGORY_RULE
+  PRODUCT_RULE
+}
+
+// ─── Promotions Calendar ──────────────────────────────────────────────────────
+
+model Promotion {
+  id            String        @id @default(cuid())
+  companyId     String
+  productId     String?
+  title         String
+  description   String?
+  discountType  String        @default("PERCENTAGE")
+  discountValue Float
+  startDate     DateTime
+  endDate       DateTime
+  region        KosovoRegion?
+  isActive      Boolean       @default(true)
+  status        String        @default("SCHEDULED")
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  company Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  product Product? @relation(fields: [productId], references: [id])
+
+  @@map("promotions")
 }

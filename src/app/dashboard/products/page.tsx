@@ -1,5 +1,6 @@
 import { Header } from "@/components/layout/header";
 import { ProductsTable } from "@/components/dashboard/products-table";
+import { ExportButton } from "@/components/ui/export-button";
 import { db } from "@/lib/db";
 
 async function getProducts() {
@@ -39,6 +40,7 @@ export default async function ProductsPage() {
       <Header
         title="Katalogu i Produkteve"
         subtitle={`${products.length} SKU aktive • Rendosur sipas marzhit (më i ulëti i pari)`}
+        actions={<ExportButton type="products" label="Eksporto Excel" />}
       />
       <div className="p-6">
         <ProductsTable products={products} />

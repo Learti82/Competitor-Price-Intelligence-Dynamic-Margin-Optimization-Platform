@@ -1,5 +1,6 @@
 import { Header } from "@/components/layout/header";
 import { RecommendationsPanel } from "@/components/dashboard/recommendations-panel";
+import { ExportButton } from "@/components/ui/export-button";
 import { db } from "@/lib/db";
 
 async function getRecommendations() {
@@ -46,6 +47,7 @@ export default async function RecommendationsPage() {
       <Header
         title="Rekomandimet e Marzhit AI"
         subtitle={`${data.pending.length} aktive • Mundësi: €${data.totalOpportunity.toFixed(0)}/ditë`}
+        actions={<ExportButton type="recommendations" label="Eksporto Excel" />}
       />
       <div className="p-6">
         <RecommendationsPanel

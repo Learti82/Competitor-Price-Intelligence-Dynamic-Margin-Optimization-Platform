@@ -77,6 +77,7 @@ export async function PATCH(req: NextRequest) {
             action: "RECOMMENDATION_APPLIED",
             entityType: "PriceRecommendation",
             entityId: id,
+            reason: reason ?? "Rekomandim AI i zbatuar",
             newValue: {
               recommendedPrice: rec.recommendedPrice,
               recommendedMargin: rec.recommendedMargin,

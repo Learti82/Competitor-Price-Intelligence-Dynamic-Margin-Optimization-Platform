@@ -3,14 +3,17 @@
 import { Bell, Search, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { KeyboardShortcutsModal } from "@/components/ui/keyboard-shortcuts-modal";
 import Link from "next/link";
 
 interface HeaderProps {
   title: string;
   subtitle?: string;
+  actions?: React.ReactNode;
 }
 
-export function Header({ title, subtitle }: HeaderProps) {
+export function Header({ title, subtitle, actions }: HeaderProps) {
   return (
     <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-gray-800 bg-gray-950/95 px-6 backdrop-blur">
       <div>
@@ -19,6 +22,8 @@ export function Header({ title, subtitle }: HeaderProps) {
       </div>
 
       <div className="flex items-center gap-3">
+        {actions}
+
         <div className="relative hidden md:block">
           <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-500" />
           <Input
@@ -26,6 +31,9 @@ export function Header({ title, subtitle }: HeaderProps) {
             className="w-64 pl-9 bg-gray-900 border-gray-700 text-gray-300 placeholder:text-gray-600 text-sm h-8"
           />
         </div>
+
+        <ThemeToggle />
+        <KeyboardShortcutsModal />
 
         <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white h-8 w-8">
           <RefreshCw className="h-4 w-4" />

@@ -1,6 +1,7 @@
 import { Header } from "@/components/layout/header";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { ExportButton } from "@/components/ui/export-button";
 import { db } from "@/lib/db";
 import { ClipboardList, User, Clock } from "lucide-react";
 
@@ -34,6 +35,7 @@ export default async function AuditPage() {
       <Header
         title="Regjistri i Auditimit"
         subtitle={`${logs.length} veprime të regjistruara • Kontabilitet i plotë`}
+        actions={<ExportButton type="audit" label="Eksporto Excel" />}
       />
       <div className="p-6">
         <Card className="bg-gray-900 border-gray-800">
@@ -71,6 +73,12 @@ export default async function AuditPage() {
                         </span>
                       </div>
 
+                      {(log as any).reason && (
+                        <div className="mt-1 text-xs">
+                          <span className="text-gray-600">Arsyeja: </span>
+                          <span className="text-yellow-400 italic">{(log as any).reason}</span>
+                        </div>
+                      )}
                       {log.newValue && typeof log.newValue === "object" && (
                         <div className="mt-1 text-xs text-gray-600">
                           {Object.entries(log.newValue as Record<string, unknown>)
