@@ -1,3 +1,4 @@
+import { requireCompany } from "@/lib/get-company";
 import { Header } from "@/components/layout/header";
 import { DashboardStats } from "@/components/dashboard/dashboard-stats";
 import { PriceHeatmap } from "@/components/dashboard/price-heatmap";
@@ -8,9 +9,7 @@ import { MarginTrend } from "@/components/dashboard/margin-trend";
 import { db } from "@/lib/db";
 
 async function getDashboardData() {
-  const company = await db.company.findFirst({
-    where: { clerkOrgId: "demo_org_markal" },
-  });
+  const company = await requireCompany();
 
   if (!company) return null;
 
@@ -132,7 +131,7 @@ export default async function DashboardPage() {
     <div className="flex flex-col">
       <Header
         title="Paneli Kryesor"
-        subtitle={`MarkAl Group • ${new Date().toLocaleDateString("sq-AL", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}`}
+        subtitle={`${data.company.name} • ${new Date().toLocaleDateString("sq-AL", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}`}
       />
 
       <div className="p-6 space-y-6">

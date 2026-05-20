@@ -1,3 +1,4 @@
+import { requireCompany } from "@/lib/get-company";
 import { Header } from "@/components/layout/header";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -6,9 +7,7 @@ import { db } from "@/lib/db";
 import { ClipboardList, User, Clock } from "lucide-react";
 
 async function getAuditLogs() {
-  const company = await db.company.findFirst({
-    where: { clerkOrgId: "demo_org_markal" },
-  });
+  const company = await requireCompany();
   if (!company) return [];
 
   return db.auditLog.findMany({

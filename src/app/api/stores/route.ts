@@ -1,11 +1,10 @@
+import { requireCompany } from "@/lib/get-company";
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
 export async function GET() {
   try {
-    const company = await db.company.findFirst({
-      where: { clerkOrgId: "demo_org_markal" },
-    });
+    const company = await requireCompany();
     if (!company) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
     const stores = await db.store.findMany({

@@ -1,12 +1,11 @@
+import { requireCompany } from "@/lib/get-company";
 import { Header } from "@/components/layout/header";
 import { ProductsTable } from "@/components/dashboard/products-table";
 import { ExportButton } from "@/components/ui/export-button";
 import { db } from "@/lib/db";
 
 async function getProducts() {
-  const company = await db.company.findFirst({
-    where: { clerkOrgId: "demo_org_markal" },
-  });
+  const company = await requireCompany();
   if (!company) return [];
 
   return db.product.findMany({

@@ -1,3 +1,4 @@
+import { requireCompany } from "@/lib/get-company";
 import { Header } from "@/components/layout/header";
 import { AnalyticsDashboard } from "@/components/dashboard/analytics-dashboard";
 import { MarketPositionChart } from "@/components/dashboard/market-position-chart";
@@ -7,9 +8,7 @@ import { db } from "@/lib/db";
 import { subDays } from "date-fns";
 
 async function getAnalyticsData() {
-  const company = await db.company.findFirst({
-    where: { clerkOrgId: "demo_org_markal" },
-  });
+  const company = await requireCompany();
   if (!company) return null;
 
   const since = subDays(new Date(), 30);

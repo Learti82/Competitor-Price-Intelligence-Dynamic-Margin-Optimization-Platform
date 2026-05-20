@@ -1,3 +1,4 @@
+import { requireCompany } from "@/lib/get-company";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { subDays } from "date-fns";
@@ -8,9 +9,7 @@ export async function GET(req: NextRequest) {
     const days = parseInt(searchParams.get("days") ?? "30");
     const productId = searchParams.get("productId");
 
-    const company = await db.company.findFirst({
-      where: { clerkOrgId: "demo_org_markal" },
-    });
+    const company = await requireCompany();
     if (!company) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
     const since = subDays(new Date(), days);
