@@ -72,58 +72,101 @@ const COMPETITORS = [
 ];
 
 const PRODUCTS_SEED = [
-  // BEVERAGES
+  // BEVERAGES (7)
   { name: "Coca-Cola 2L", nameAlbanian: "Coca-Cola 2L", brand: "Coca-Cola", category: "BEVERAGES" as ProductCategory, unit: "piece", unitSize: 2, unitLabel: "2L", cogs: 0.82, currentPrice: 1.15, sku: "BEV-001" },
   { name: "Pepsi 1.5L", nameAlbanian: "Pepsi 1.5L", brand: "Pepsi", category: "BEVERAGES" as ProductCategory, unit: "piece", unitSize: 1.5, unitLabel: "1.5L", cogs: 0.64, currentPrice: 0.89, sku: "BEV-002" },
   { name: "Uji Rugova 1.5L", nameAlbanian: "Uji Rugova 1.5L", brand: "Rugova", category: "BEVERAGES" as ProductCategory, unit: "piece", unitSize: 1.5, unitLabel: "1.5L", cogs: 0.18, currentPrice: 0.35, sku: "BEV-003" },
   { name: "Red Bull 250ml", nameAlbanian: "Red Bull 250ml", brand: "Red Bull", category: "BEVERAGES" as ProductCategory, unit: "piece", unitSize: 0.25, unitLabel: "250ml", cogs: 0.82, currentPrice: 1.45, sku: "BEV-004" },
-  { name: "Lëngu Capri-Sun 200ml", nameAlbanian: "Capri-Sun 200ml", brand: "Capri-Sun", category: "BEVERAGES" as ProductCategory, unit: "piece", unitSize: 0.2, unitLabel: "200ml", cogs: 0.28, currentPrice: 0.45, sku: "BEV-005" },
-  // DAIRY
+  { name: "Capri-Sun 200ml", nameAlbanian: "Capri-Sun 200ml", brand: "Capri-Sun", category: "BEVERAGES" as ProductCategory, unit: "piece", unitSize: 0.2, unitLabel: "200ml", cogs: 0.28, currentPrice: 0.45, sku: "BEV-005" },
+  { name: "Fanta Portokall 1.5L", nameAlbanian: "Fanta Portokall 1.5L", brand: "Coca-Cola", category: "BEVERAGES" as ProductCategory, unit: "piece", unitSize: 1.5, unitLabel: "1.5L", cogs: 0.70, currentPrice: 0.99, sku: "BEV-006" },
+  { name: "Uji i gazuar Soda 1L", nameAlbanian: "Uji i gazuar Soda 1L", brand: "Rugova", category: "BEVERAGES" as ProductCategory, unit: "piece", unitSize: 1, unitLabel: "1L", cogs: 0.22, currentPrice: 0.39, sku: "BEV-007" },
+  // DAIRY (7)
   { name: "Qumështi Deva 1L", nameAlbanian: "Qumështi Deva 1L", brand: "Deva", category: "DAIRY" as ProductCategory, unit: "piece", unitSize: 1, unitLabel: "1L", cogs: 0.72, currentPrice: 0.99, sku: "DAI-001" },
   { name: "Djathë i Bardhë 400g", nameAlbanian: "Djathë i Bardhë 400g", brand: "Gëzimi", category: "DAIRY" as ProductCategory, unit: "piece", unitSize: 0.4, unitLabel: "400g", cogs: 1.45, currentPrice: 2.15, sku: "DAI-002" },
   { name: "Kosi 500g", nameAlbanian: "Kosi 500g", brand: "Deva", category: "DAIRY" as ProductCategory, unit: "piece", unitSize: 0.5, unitLabel: "500g", cogs: 0.68, currentPrice: 0.95, sku: "DAI-003" },
   { name: "Gjalpë 200g", nameAlbanian: "Gjalpë 200g", brand: "Milkos", category: "DAIRY" as ProductCategory, unit: "piece", unitSize: 0.2, unitLabel: "200g", cogs: 1.20, currentPrice: 1.75, sku: "DAI-004" },
   { name: "Vezë Fshati 12 copë", nameAlbanian: "Vezë Fshati 12 copë", brand: "Agrokos", category: "DAIRY" as ProductCategory, unit: "pack", unitSize: 12, unitLabel: "12 copë", cogs: 1.55, currentPrice: 2.20, sku: "DAI-005" },
-  // MEAT_POULTRY
+  { name: "Krem djathë Philadelphia 200g", nameAlbanian: "Krem djathë 200g", brand: "Kraft", category: "DAIRY" as ProductCategory, unit: "piece", unitSize: 0.2, unitLabel: "200g", cogs: 1.80, currentPrice: 2.59, sku: "DAI-006" },
+  { name: "Qumësht i kondensuar 400g", nameAlbanian: "Qumësht i kondensuar 400g", brand: "Nestlé", category: "DAIRY" as ProductCategory, unit: "piece", unitSize: 0.4, unitLabel: "400g", cogs: 0.95, currentPrice: 1.39, sku: "DAI-007" },
+  // MEAT_POULTRY (5)
   { name: "Pulë e tërë 1kg", nameAlbanian: "Pulë e tërë 1kg", brand: "Kosovatex", category: "MEAT_POULTRY" as ProductCategory, unit: "kg", unitSize: 1, unitLabel: "1kg", cogs: 2.45, currentPrice: 3.49, sku: "MEA-001" },
   { name: "Mish viçi i grirë 500g", nameAlbanian: "Mish viçi i grirë 500g", brand: "Jumbo", category: "MEAT_POULTRY" as ProductCategory, unit: "piece", unitSize: 0.5, unitLabel: "500g", cogs: 2.80, currentPrice: 3.99, sku: "MEA-002" },
   { name: "Suxhuk 300g", nameAlbanian: "Suxhuk 300g", brand: "Arben", category: "MEAT_POULTRY" as ProductCategory, unit: "piece", unitSize: 0.3, unitLabel: "300g", cogs: 1.65, currentPrice: 2.49, sku: "MEA-003" },
-  // FRUITS_VEGETABLES
+  { name: "Gjoks pule 500g", nameAlbanian: "Gjoks pule 500g", brand: "Kosovatex", category: "MEAT_POULTRY" as ProductCategory, unit: "piece", unitSize: 0.5, unitLabel: "500g", cogs: 2.10, currentPrice: 2.99, sku: "MEA-004" },
+  { name: "Salami Milano 150g", nameAlbanian: "Salami Milano 150g", brand: "Maestro", category: "MEAT_POULTRY" as ProductCategory, unit: "piece", unitSize: 0.15, unitLabel: "150g", cogs: 1.35, currentPrice: 1.99, sku: "MEA-005" },
+  // FRUITS_VEGETABLES (6)
   { name: "Domate 1kg", nameAlbanian: "Domate 1kg", brand: null, category: "FRUITS_VEGETABLES" as ProductCategory, unit: "kg", unitSize: 1, unitLabel: "1kg", cogs: 0.62, currentPrice: 0.99, sku: "FRU-001" },
   { name: "Patate 2kg", nameAlbanian: "Patate 2kg", brand: null, category: "FRUITS_VEGETABLES" as ProductCategory, unit: "piece", unitSize: 2, unitLabel: "2kg", cogs: 0.78, currentPrice: 1.19, sku: "FRU-002" },
   { name: "Banane 1kg", nameAlbanian: "Banane 1kg", brand: null, category: "FRUITS_VEGETABLES" as ProductCategory, unit: "kg", unitSize: 1, unitLabel: "1kg", cogs: 0.75, currentPrice: 1.15, sku: "FRU-003" },
   { name: "Qepë 1kg", nameAlbanian: "Qepë 1kg", brand: null, category: "FRUITS_VEGETABLES" as ProductCategory, unit: "kg", unitSize: 1, unitLabel: "1kg", cogs: 0.42, currentPrice: 0.69, sku: "FRU-004" },
-  // BAKERY
+  { name: "Mollë 1kg", nameAlbanian: "Mollë 1kg", brand: null, category: "FRUITS_VEGETABLES" as ProductCategory, unit: "kg", unitSize: 1, unitLabel: "1kg", cogs: 0.82, currentPrice: 1.29, sku: "FRU-005" },
+  { name: "Kastravec 1kg", nameAlbanian: "Kastravec 1kg", brand: null, category: "FRUITS_VEGETABLES" as ProductCategory, unit: "kg", unitSize: 1, unitLabel: "1kg", cogs: 0.55, currentPrice: 0.89, sku: "FRU-006" },
+  // BAKERY (4)
   { name: "Buka e bardhë 500g", nameAlbanian: "Buka e bardhë 500g", brand: "Bajgora", category: "BAKERY" as ProductCategory, unit: "piece", unitSize: 0.5, unitLabel: "500g", cogs: 0.38, currentPrice: 0.55, sku: "BAK-001" },
   { name: "Kroasant 60g", nameAlbanian: "Kroasant 60g", brand: "Pan", category: "BAKERY" as ProductCategory, unit: "piece", unitSize: 0.06, unitLabel: "60g", cogs: 0.18, currentPrice: 0.29, sku: "BAK-002" },
-  // SNACKS
+  { name: "Buka integrale 400g", nameAlbanian: "Buka integrale 400g", brand: "Bajgora", category: "BAKERY" as ProductCategory, unit: "piece", unitSize: 0.4, unitLabel: "400g", cogs: 0.45, currentPrice: 0.69, sku: "BAK-003" },
+  { name: "Simite me kripë 80g", nameAlbanian: "Simite me kripë 80g", brand: "Pan", category: "BAKERY" as ProductCategory, unit: "piece", unitSize: 0.08, unitLabel: "80g", cogs: 0.12, currentPrice: 0.19, sku: "BAK-004" },
+  // SNACKS (5)
   { name: "Lay's Çips 150g", nameAlbanian: "Lay's Çips 150g", brand: "Lay's", category: "SNACKS_CONFECTIONERY" as ProductCategory, unit: "piece", unitSize: 0.15, unitLabel: "150g", cogs: 0.72, currentPrice: 1.09, sku: "SNK-001" },
   { name: "Nutella 400g", nameAlbanian: "Nutella 400g", brand: "Ferrero", category: "SNACKS_CONFECTIONERY" as ProductCategory, unit: "piece", unitSize: 0.4, unitLabel: "400g", cogs: 2.45, currentPrice: 3.49, sku: "SNK-002" },
   { name: "Kinder Bueno 43g", nameAlbanian: "Kinder Bueno 43g", brand: "Ferrero", category: "SNACKS_CONFECTIONERY" as ProductCategory, unit: "piece", unitSize: 0.043, unitLabel: "43g", cogs: 0.62, currentPrice: 0.89, sku: "SNK-003" },
-  // PASTA_GRAINS
+  { name: "Pringles Original 165g", nameAlbanian: "Pringles 165g", brand: "Pringles", category: "SNACKS_CONFECTIONERY" as ProductCategory, unit: "piece", unitSize: 0.165, unitLabel: "165g", cogs: 1.15, currentPrice: 1.69, sku: "SNK-004" },
+  { name: "KitKat 4-finger 45g", nameAlbanian: "KitKat 45g", brand: "Nestlé", category: "SNACKS_CONFECTIONERY" as ProductCategory, unit: "piece", unitSize: 0.045, unitLabel: "45g", cogs: 0.42, currentPrice: 0.65, sku: "SNK-005" },
+  // PASTA_GRAINS (4)
   { name: "Makarona Barilla 500g", nameAlbanian: "Makarona Barilla 500g", brand: "Barilla", category: "PASTA_GRAINS" as ProductCategory, unit: "piece", unitSize: 0.5, unitLabel: "500g", cogs: 0.68, currentPrice: 0.99, sku: "PAS-001" },
   { name: "Oriz Basmati 1kg", nameAlbanian: "Oriz Basmati 1kg", brand: "Tilda", category: "PASTA_GRAINS" as ProductCategory, unit: "piece", unitSize: 1, unitLabel: "1kg", cogs: 1.45, currentPrice: 2.09, sku: "PAS-002" },
   { name: "Miell gruri 1kg", nameAlbanian: "Miell gruri 1kg", brand: "Shpat", category: "PASTA_GRAINS" as ProductCategory, unit: "piece", unitSize: 1, unitLabel: "1kg", cogs: 0.48, currentPrice: 0.69, sku: "PAS-003" },
-  // OILS_FATS
+  { name: "Makarona Penne 500g", nameAlbanian: "Makarona Penne 500g", brand: "De Cecco", category: "PASTA_GRAINS" as ProductCategory, unit: "piece", unitSize: 0.5, unitLabel: "500g", cogs: 0.85, currentPrice: 1.19, sku: "PAS-004" },
+  // OILS_FATS (3)
   { name: "Vaj ulliri 750ml", nameAlbanian: "Vaj ulliri 750ml", brand: "Bertolli", category: "OILS_FATS" as ProductCategory, unit: "piece", unitSize: 0.75, unitLabel: "750ml", cogs: 3.20, currentPrice: 4.49, sku: "OIL-001" },
   { name: "Vaj luledielli 1L", nameAlbanian: "Vaj luledielli 1L", brand: "Bona", category: "OILS_FATS" as ProductCategory, unit: "piece", unitSize: 1, unitLabel: "1L", cogs: 1.42, currentPrice: 1.99, sku: "OIL-002" },
-  // COFFEE_TEA
+  { name: "Margarine Rama 500g", nameAlbanian: "Margarine Rama 500g", brand: "Unilever", category: "OILS_FATS" as ProductCategory, unit: "piece", unitSize: 0.5, unitLabel: "500g", cogs: 0.88, currentPrice: 1.29, sku: "OIL-003" },
+  // COFFEE_TEA (4)
   { name: "Kafe Bona 250g", nameAlbanian: "Kafe Bona 250g", brand: "Bona", category: "COFFEE_TEA" as ProductCategory, unit: "piece", unitSize: 0.25, unitLabel: "250g", cogs: 2.15, currentPrice: 3.19, sku: "COF-001" },
   { name: "Kafe Nescafé Classic 200g", nameAlbanian: "Nescafé Classic 200g", brand: "Nestlé", category: "COFFEE_TEA" as ProductCategory, unit: "piece", unitSize: 0.2, unitLabel: "200g", cogs: 3.45, currentPrice: 4.89, sku: "COF-002" },
   { name: "Çaj Lipton 25 filtra", nameAlbanian: "Çaj Lipton 25 filtra", brand: "Lipton", category: "COFFEE_TEA" as ProductCategory, unit: "piece", unitSize: 25, unitLabel: "25 filtra", cogs: 0.88, currentPrice: 1.29, sku: "COF-003" },
-  // CLEANING
+  { name: "Kafe Lavazza 250g", nameAlbanian: "Kafe Lavazza 250g", brand: "Lavazza", category: "COFFEE_TEA" as ProductCategory, unit: "piece", unitSize: 0.25, unitLabel: "250g", cogs: 3.80, currentPrice: 5.49, sku: "COF-004" },
+  // CLEANING (4)
   { name: "Ariel 3kg", nameAlbanian: "Ariel 3kg", brand: "P&G", category: "CLEANING" as ProductCategory, unit: "piece", unitSize: 3, unitLabel: "3kg", cogs: 4.20, currentPrice: 5.99, sku: "CLE-001" },
   { name: "Fairy 750ml", nameAlbanian: "Fairy 750ml", brand: "P&G", category: "CLEANING" as ProductCategory, unit: "piece", unitSize: 0.75, unitLabel: "750ml", cogs: 0.98, currentPrice: 1.45, sku: "CLE-002" },
-  // PERSONAL_CARE
+  { name: "Flash Spray 750ml", nameAlbanian: "Flash Spray 750ml", brand: "P&G", category: "CLEANING" as ProductCategory, unit: "piece", unitSize: 0.75, unitLabel: "750ml", cogs: 0.85, currentPrice: 1.29, sku: "CLE-003" },
+  { name: "Persil Color 2kg", nameAlbanian: "Persil Color 2kg", brand: "Henkel", category: "CLEANING" as ProductCategory, unit: "piece", unitSize: 2, unitLabel: "2kg", cogs: 3.10, currentPrice: 4.49, sku: "CLE-004" },
+  // PERSONAL_CARE (5)
   { name: "Head & Shoulders 400ml", nameAlbanian: "Head & Shoulders 400ml", brand: "P&G", category: "PERSONAL_CARE" as ProductCategory, unit: "piece", unitSize: 0.4, unitLabel: "400ml", cogs: 2.20, currentPrice: 3.15, sku: "PER-001" },
   { name: "Colgate Triple Action 75ml", nameAlbanian: "Colgate Triple Action 75ml", brand: "Colgate", category: "PERSONAL_CARE" as ProductCategory, unit: "piece", unitSize: 0.075, unitLabel: "75ml", cogs: 0.72, currentPrice: 1.09, sku: "PER-002" },
-  // HOUSEHOLD
+  { name: "Dove Soap 90g", nameAlbanian: "Dove Soap 90g", brand: "Unilever", category: "PERSONAL_CARE" as ProductCategory, unit: "piece", unitSize: 0.09, unitLabel: "90g", cogs: 0.55, currentPrice: 0.89, sku: "PER-003" },
+  { name: "Nivea Cream 150ml", nameAlbanian: "Nivea Cream 150ml", brand: "Beiersdorf", category: "PERSONAL_CARE" as ProductCategory, unit: "piece", unitSize: 0.15, unitLabel: "150ml", cogs: 1.45, currentPrice: 2.19, sku: "PER-004" },
+  { name: "Gillette Mach3 Shave Gel 200ml", nameAlbanian: "Gillette Shave Gel 200ml", brand: "P&G", category: "PERSONAL_CARE" as ProductCategory, unit: "piece", unitSize: 0.2, unitLabel: "200ml", cogs: 1.80, currentPrice: 2.69, sku: "PER-005" },
+  // HOUSEHOLD (4)
   { name: "Letër higjienike Zewa 4-pak", nameAlbanian: "Letër higjienike Zewa 4-pak", brand: "Zewa", category: "HOUSEHOLD" as ProductCategory, unit: "pack", unitSize: 4, unitLabel: "4 copë", cogs: 0.88, currentPrice: 1.29, sku: "HOU-001" },
-  // CONDIMENTS
+  { name: "Peceta fytyre Kleenex 3-pak", nameAlbanian: "Kleenex 3-pak", brand: "Kleenex", category: "HOUSEHOLD" as ProductCategory, unit: "pack", unitSize: 3, unitLabel: "3 kutia", cogs: 1.10, currentPrice: 1.59, sku: "HOU-002" },
+  { name: "Qese mbeturinash 50L 20 cope", nameAlbanian: "Qese mbeturinash 20 cope", brand: "Fino", category: "HOUSEHOLD" as ProductCategory, unit: "pack", unitSize: 20, unitLabel: "20 cope", cogs: 0.65, currentPrice: 0.99, sku: "HOU-003" },
+  { name: "Letër kuzhine 2-pak", nameAlbanian: "Letër kuzhine 2-pak", brand: "Zewa", category: "HOUSEHOLD" as ProductCategory, unit: "pack", unitSize: 2, unitLabel: "2 rulona", cogs: 0.72, currentPrice: 1.09, sku: "HOU-004" },
+  // CONDIMENTS (4)
   { name: "Ketchup Heinz 570g", nameAlbanian: "Ketchup Heinz 570g", brand: "Heinz", category: "CONDIMENTS" as ProductCategory, unit: "piece", unitSize: 0.57, unitLabel: "570g", cogs: 1.55, currentPrice: 2.19, sku: "CON-001" },
   { name: "Majonezë Hellmann's 400g", nameAlbanian: "Majonezë Hellmann's 400g", brand: "Unilever", category: "CONDIMENTS" as ProductCategory, unit: "piece", unitSize: 0.4, unitLabel: "400g", cogs: 1.42, currentPrice: 2.09, sku: "CON-002" },
-  // CANNED
-  { name: "Ton (Tuna) Rio Mare 160g", nameAlbanian: "Ton Rio Mare 160g", brand: "Rio Mare", category: "CANNED_GOODS" as ProductCategory, unit: "piece", unitSize: 0.16, unitLabel: "160g", cogs: 1.25, currentPrice: 1.85, sku: "CAN-001" },
+  { name: "Mustardë French's 255g", nameAlbanian: "Mustardë French's 255g", brand: "French's", category: "CONDIMENTS" as ProductCategory, unit: "piece", unitSize: 0.255, unitLabel: "255g", cogs: 0.95, currentPrice: 1.49, sku: "CON-003" },
+  { name: "Uthull molle 500ml", nameAlbanian: "Uthull molle 500ml", brand: "Hengstenberg", category: "CONDIMENTS" as ProductCategory, unit: "piece", unitSize: 0.5, unitLabel: "500ml", cogs: 0.68, currentPrice: 0.99, sku: "CON-004" },
+  // CANNED_GOODS (4)
+  { name: "Ton Rio Mare 160g", nameAlbanian: "Ton Rio Mare 160g", brand: "Rio Mare", category: "CANNED_GOODS" as ProductCategory, unit: "piece", unitSize: 0.16, unitLabel: "160g", cogs: 1.25, currentPrice: 1.85, sku: "CAN-001" },
+  { name: "Fasule e kuqe konservë 400g", nameAlbanian: "Fasule e kuqe 400g", brand: "Bonduelle", category: "CANNED_GOODS" as ProductCategory, unit: "piece", unitSize: 0.4, unitLabel: "400g", cogs: 0.55, currentPrice: 0.85, sku: "CAN-002" },
+  { name: "Salcë domatesh Mutti 400g", nameAlbanian: "Salcë domatesh 400g", brand: "Mutti", category: "CANNED_GOODS" as ProductCategory, unit: "piece", unitSize: 0.4, unitLabel: "400g", cogs: 0.72, currentPrice: 1.09, sku: "CAN-003" },
+  { name: "Misër i konservuar 340g", nameAlbanian: "Misër i konservuar 340g", brand: "Bonduelle", category: "CANNED_GOODS" as ProductCategory, unit: "piece", unitSize: 0.34, unitLabel: "340g", cogs: 0.48, currentPrice: 0.75, sku: "CAN-004" },
+  // FROZEN (3)
+  { name: "Pizza Dr. Oetker Margherita 355g", nameAlbanian: "Pizza Margherita 355g", brand: "Dr. Oetker", category: "FROZEN" as ProductCategory, unit: "piece", unitSize: 0.355, unitLabel: "355g", cogs: 1.65, currentPrice: 2.49, sku: "FRZ-001" },
+  { name: "Patate të ngrira McCain 750g", nameAlbanian: "Patate të ngrira 750g", brand: "McCain", category: "FROZEN" as ProductCategory, unit: "piece", unitSize: 0.75, unitLabel: "750g", cogs: 1.20, currentPrice: 1.79, sku: "FRZ-002" },
+  { name: "Akullorë Magnum Classic 120ml", nameAlbanian: "Akullorë Magnum 120ml", brand: "Unilever", category: "FROZEN" as ProductCategory, unit: "piece", unitSize: 0.12, unitLabel: "120ml", cogs: 0.72, currentPrice: 1.19, sku: "FRZ-003" },
+  // ALCOHOL (3)
+  { name: "Birra Heineken 500ml", nameAlbanian: "Birra Heineken 500ml", brand: "Heineken", category: "ALCOHOL" as ProductCategory, unit: "piece", unitSize: 0.5, unitLabel: "500ml", cogs: 0.68, currentPrice: 1.09, sku: "ALC-001" },
+  { name: "Birra Peja 500ml", nameAlbanian: "Birra Peja 500ml", brand: "Peja", category: "ALCOHOL" as ProductCategory, unit: "piece", unitSize: 0.5, unitLabel: "500ml", cogs: 0.42, currentPrice: 0.69, sku: "ALC-002" },
+  { name: "Verë e kuqe Merlot 750ml", nameAlbanian: "Verë e kuqe Merlot 750ml", brand: "Stone Castle", category: "ALCOHOL" as ProductCategory, unit: "piece", unitSize: 0.75, unitLabel: "750ml", cogs: 2.80, currentPrice: 4.99, sku: "ALC-003" },
+  // BABY (2)
+  { name: "Pampers Active Baby 3 (40 copë)", nameAlbanian: "Pampers nr.3 40 copë", brand: "P&G", category: "BABY" as ProductCategory, unit: "pack", unitSize: 40, unitLabel: "40 copë", cogs: 5.20, currentPrice: 7.49, sku: "BAB-001" },
+  { name: "Nenë ushqim fëmijësh Nestlé 125g", nameAlbanian: "Ushqim fëmijësh 125g", brand: "Nestlé", category: "BABY" as ProductCategory, unit: "piece", unitSize: 0.125, unitLabel: "125g", cogs: 0.65, currentPrice: 0.99, sku: "BAB-002" },
+  // DELI (3)
+  { name: "Proshutë e tymosur 100g", nameAlbanian: "Proshutë e tymosur 100g", brand: "Maestro", category: "DELI" as ProductCategory, unit: "piece", unitSize: 0.1, unitLabel: "100g", cogs: 1.20, currentPrice: 1.89, sku: "DEL-001" },
+  { name: "Djathë Gouda i prerë 200g", nameAlbanian: "Djathë Gouda 200g", brand: "Milkos", category: "DELI" as ProductCategory, unit: "piece", unitSize: 0.2, unitLabel: "200g", cogs: 1.55, currentPrice: 2.29, sku: "DEL-002" },
+  { name: "Olive të zeza 200g", nameAlbanian: "Olive të zeza 200g", brand: "Meze", category: "DELI" as ProductCategory, unit: "piece", unitSize: 0.2, unitLabel: "200g", cogs: 0.82, currentPrice: 1.29, sku: "DEL-003" },
 ];
 
 async function main() {
@@ -316,7 +359,7 @@ async function main() {
   );
 
   // Create products
-  console.log("📦 Creating product catalog (38 SKUs)...");
+  console.log(`📦 Creating product catalog (${PRODUCTS_SEED.length} SKUs)...`);
   const createdProducts = await Promise.all(
     PRODUCTS_SEED.map((p) => {
       const margin = ((p.currentPrice - p.cogs) / p.currentPrice) * 100;
