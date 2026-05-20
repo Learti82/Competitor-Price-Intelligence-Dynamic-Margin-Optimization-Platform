@@ -12,6 +12,7 @@ export default function SignInPage() {
           <p className="text-gray-400 text-sm mt-1">Inteligjencë çmimesh për tregun kosovar</p>
         </div>
         <SignIn
+          forceRedirectUrl="/dashboard"
           appearance={{
             elements: {
               rootBox: "w-full",

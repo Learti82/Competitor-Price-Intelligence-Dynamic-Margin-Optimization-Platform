@@ -12,6 +12,7 @@ export default function SignUpPage() {
           <p className="text-gray-400 text-sm mt-1">Krijo llogarinë tuaj falas</p>
         </div>
         <SignUp
+          forceRedirectUrl="/dashboard"
           appearance={{
             elements: {
               rootBox: "w-full",
