@@ -6,6 +6,8 @@ import { RecentAlerts } from "@/components/dashboard/recent-alerts";
 import { TopRecommendations } from "@/components/dashboard/top-recommendations";
 import { CompetitorActivity } from "@/components/dashboard/competitor-activity";
 import { MarginTrend } from "@/components/dashboard/margin-trend";
+import { SetupPrompt } from "@/components/dashboard/setup-prompt";
+import { QuickActions } from "@/components/dashboard/quick-actions";
 import { db } from "@/lib/db";
 
 async function getDashboardData() {
@@ -35,6 +37,7 @@ async function getDashboardData() {
         where: { companyId: company.id, status: "PENDING", expectedRevenueDelta: { gt: 0 } },
         _sum: { expectedRevenueDelta: true },
       }),
+      db.marginAlert.count({ where: { companyId: company.id, isRead: false, severity: { in: ["HIGH", "CRITICAL"] } } }),
     ]),
     // Recent alerts
     db.marginAlert.findMany({
@@ -103,6 +106,7 @@ async function getDashboardData() {
       trackedCompetitors: stats[3],
       avgMargin: stats[4]._avg.currentMargin ?? 0,
       revenueOpportunity: stats[5]._sum.expectedRevenueDelta ?? 0,
+      criticalAlerts: stats[6],
     },
     recentAlerts,
     topRecommendations,
@@ -135,30 +139,36 @@ export default async function DashboardPage() {
       />
 
       <div className="p-6 space-y-6">
-        {/* KPI Stats Row */}
-        <DashboardStats stats={data.stats} />
+        {data.stats.totalProducts === 0 ? (
+          <SetupPrompt />
+        ) : (
+          <>
+            <DashboardStats stats={data.stats} />
 
-        {/* Main Content Grid */}
-        <div className="grid lg:grid-cols-3 gap-6">
-          {/* Price Heatmap — Hero */}
-          <div className="lg:col-span-2">
-            <PriceHeatmap products={data.products} />
-          </div>
+            <div className="grid lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2">
+                <PriceHeatmap products={data.products} />
+              </div>
+              <div className="space-y-4">
+                <QuickActions
+                  pendingRecs={data.stats.pendingRecommendations}
+                  revenueOpportunity={data.stats.revenueOpportunity}
+                  unreadAlerts={data.stats.unreadAlerts}
+                  criticalAlerts={data.stats.criticalAlerts ?? 0}
+                  avgMargin={data.stats.avgMargin}
+                />
+                <RecentAlerts alerts={data.recentAlerts} />
+              </div>
+            </div>
 
-          {/* Alerts sidebar */}
-          <div>
-            <RecentAlerts alerts={data.recentAlerts} />
-          </div>
-        </div>
+            <div className="grid lg:grid-cols-2 gap-6">
+              <TopRecommendations recommendations={data.topRecommendations} />
+              <CompetitorActivity competitors={data.competitors} />
+            </div>
 
-        {/* Recommendations + Competitor Activity */}
-        <div className="grid lg:grid-cols-2 gap-6">
-          <TopRecommendations recommendations={data.topRecommendations} />
-          <CompetitorActivity competitors={data.competitors} />
-        </div>
-
-        {/* Margin Trend */}
-        <MarginTrend marginHistory={data.marginHistory} />
+            <MarginTrend marginHistory={data.marginHistory} />
+          </>
+        )}
       </div>
     </div>
   );

@@ -8,6 +8,7 @@ interface Stats {
   trackedCompetitors: number;
   avgMargin: number;
   revenueOpportunity: number;
+  criticalAlerts?: number;
 }
 
 export function DashboardStats({ stats }: { stats: Stats }) {

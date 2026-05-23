@@ -7,7 +7,7 @@ import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { KeyboardShortcutsModal } from "@/components/ui/keyboard-shortcuts-modal";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
 import { UserButton } from "@clerk/nextjs";
 
 interface HeaderProps {
@@ -20,6 +20,14 @@ export function Header({ title, subtitle, actions }: HeaderProps) {
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [isPending, startTransition] = useTransition();
+  const [unreadCount, setUnreadCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    fetch("/api/alerts?unread=true")
+      .then((r) => r.json())
+      .then((d) => setUnreadCount(d.alerts?.length ?? 0))
+      .catch(() => {});
+  }, []);
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -69,9 +77,11 @@ export function Header({ title, subtitle, actions }: HeaderProps) {
         <Link href="/dashboard/alerts">
           <Button variant="ghost" size="icon" className="relative text-gray-400 hover:text-white h-8 w-8">
             <Bell className="h-4 w-4" />
-            <span className="absolute -right-0.5 -top-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-red-500 text-[9px] font-bold text-white">
-              !
-            </span>
+            {unreadCount !== null && unreadCount > 0 && (
+              <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[9px] font-bold text-white">
+                {unreadCount > 9 ? "9+" : unreadCount}
+              </span>
+            )}
           </Button>
         </Link>
 

@@ -1,10 +1,12 @@
 import { requireCompany } from "@/lib/get-company";
 import { db } from "@/lib/db";
 import { Header } from "@/components/layout/header";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { formatCurrency, formatPercent, categoryLabel } from "@/lib/utils";
 import { FilterBar } from "./filter-bar";
-import { TrendingDown, TrendingUp, Minus, Package, BarChart3, Target } from "lucide-react";
+import { TrendingDown, TrendingUp, Minus, Package, BarChart3, Target, Flame } from "lucide-react";
+import { subDays } from "date-fns";
 
 interface PageProps {
   searchParams: Promise<{ category?: string; opportunities?: string }>;
@@ -28,22 +30,45 @@ export default async function CompetitorPricesPage({ searchParams }: PageProps) 
     );
   }
 
-  const products = await db.product.findMany({
-    where: { companyId: company.id, isActive: true },
-    include: {
-      competitorMappings: {
-        include: {
-          competitorProduct: {
-            include: {
-              competitor: { select: { name: true, slug: true, pricingStrategy: true } },
-              prices: { orderBy: { recordedAt: "desc" }, take: 1 },
+  const sevenDaysAgo = subDays(new Date(), 7);
+
+  const [products, recentPriceChanges] = await Promise.all([
+    db.product.findMany({
+      where: { companyId: company.id, isActive: true },
+      include: {
+        competitorMappings: {
+          include: {
+            competitorProduct: {
+              include: {
+                competitor: { select: { name: true, slug: true, pricingStrategy: true } },
+                prices: { orderBy: { recordedAt: "desc" }, take: 1 },
+              },
             },
           },
         },
       },
-    },
-    orderBy: { name: "asc" },
-  });
+      orderBy: { name: "asc" },
+    }),
+    // Get competitor products with significant price changes in last 7 days
+    db.competitorProduct.findMany({
+      where: {
+        competitor: { companyLinks: { some: { companyId: company.id } } },
+        prices: { some: { recordedAt: { gte: sevenDaysAgo } } },
+      },
+      include: {
+        competitor: { select: { name: true, slug: true } },
+        prices: {
+          orderBy: { recordedAt: "desc" },
+          take: 8,
+        },
+        mappings: {
+          include: { product: { select: { name: true } } },
+          take: 1,
+        },
+      },
+      take: 100,
+    }),
+  ]);
 
   // Build the deduped set of competitors across all products
   const competitorSet = new Map<string, { name: string; slug: string }>();
@@ -127,6 +152,38 @@ export default async function CompetitorPricesPage({ searchParams }: PageProps) 
   const gapValues = rows.map((r) => r.gapPct).filter((g): g is number => g !== null);
   const avgGap = gapValues.length ? gapValues.reduce((a, b) => a + b, 0) / gapValues.length : 0;
 
+  // Market movers: competitor products with largest price changes this week
+  type Mover = {
+    productName: string;
+    ourProductName: string | null;
+    competitorName: string;
+    oldPrice: number;
+    newPrice: number;
+    changePct: number;
+  };
+  const movers: Mover[] = [];
+  for (const cp of recentPriceChanges) {
+    const sorted = [...cp.prices].sort(
+      (a, b) => b.recordedAt.getTime() - a.recordedAt.getTime()
+    );
+    if (sorted.length < 2) continue;
+    const newest = sorted[0].price;
+    const oldest = sorted[sorted.length - 1].price;
+    if (oldest === 0) continue;
+    const changePct = ((newest - oldest) / oldest) * 100;
+    if (Math.abs(changePct) < 1.5) continue;
+    movers.push({
+      productName: cp.name,
+      ourProductName: cp.mappings[0]?.product?.name ?? null,
+      competitorName: cp.competitor.name,
+      oldPrice: oldest,
+      newPrice: newest,
+      changePct,
+    });
+  }
+  movers.sort((a, b) => Math.abs(b.changePct) - Math.abs(a.changePct));
+  const topMovers = movers.slice(0, 6);
+
   return (
     <div className="flex flex-col">
       <Header
@@ -153,6 +210,48 @@ export default async function CompetitorPricesPage({ searchParams }: PageProps) 
             valueClass={avgGap > 1 ? "text-red-400" : avgGap < -1 ? "text-emerald-400" : "text-yellow-400"}
           />
         </div>
+
+        {/* Market Movers */}
+        {topMovers.length > 0 && (
+          <Card className="bg-gray-900 border-gray-800">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-semibold text-gray-300 flex items-center gap-2">
+                <Flame className="h-4 w-4 text-orange-400" />
+                Lëvizjet e Tregut — 7 ditët e fundit
+                <Badge variant="warning" className="text-[10px] ml-1">{topMovers.length} ndryshime</Badge>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {topMovers.map((m, i) => (
+                  <div key={i} className="flex items-center gap-3 rounded-lg bg-gray-800/50 p-3">
+                    <div className={`flex h-8 w-8 items-center justify-center rounded-lg flex-shrink-0 ${
+                      m.changePct > 0 ? "bg-red-500/15" : "bg-emerald-500/15"
+                    }`}>
+                      {m.changePct > 0
+                        ? <TrendingUp className="h-4 w-4 text-red-400" />
+                        : <TrendingDown className="h-4 w-4 text-emerald-400" />}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-medium text-white truncate">
+                        {m.ourProductName ?? m.productName}
+                      </p>
+                      <p className="text-[11px] text-gray-500 truncate">{m.competitorName}</p>
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        <span className="text-[11px] text-gray-400">{formatCurrency(m.oldPrice)}</span>
+                        <span className="text-[10px] text-gray-600">→</span>
+                        <span className="text-[11px] text-white font-medium">{formatCurrency(m.newPrice)}</span>
+                        <span className={`text-[10px] font-semibold ${m.changePct > 0 ? "text-red-400" : "text-emerald-400"}`}>
+                          {m.changePct > 0 ? "+" : ""}{m.changePct.toFixed(1)}%
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Filter bar */}
         <FilterBar

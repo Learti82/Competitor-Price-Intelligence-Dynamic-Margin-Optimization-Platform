@@ -129,9 +129,11 @@ export function SettingsClient({ company, integrations }: Props) {
       const res = await fetch("/api/settings/reset", { method: "POST" });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Gabim gjatë resetimit");
-      toast.success("Të dhënat u resetuan dhe u rifilluan");
+      toast.success("Të dhënat u fshiën! Shkoni te Paneli Kryesor dhe klikoni 'Ngarko të dhënat demo'.", {
+        duration: 6000,
+      });
       setConfirmText("");
-      router.refresh();
+      setTimeout(() => router.push("/dashboard"), 2000);
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : "Gabim i panjohur");
     } finally {
