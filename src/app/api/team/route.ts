@@ -65,10 +65,12 @@ export async function POST(req: NextRequest) {
     const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
     const acceptUrl = `${appUrl}/accept-invite?token=${invite.token}`;
 
+    let emailError: string | undefined;
+
     if (process.env.RESEND_API_KEY) {
       try {
         const resend = new Resend(process.env.RESEND_API_KEY);
-        await resend.emails.send({
+        const { data: emailData, error: resendError } = await resend.emails.send({
           from: "PriceSync <onboarding@resend.dev>",
           to: invite.email,
           subject: `${actorName} ju ftoi në ${company.name} në PriceSync Manager`,
@@ -83,18 +85,25 @@ export async function POST(req: NextRequest) {
     <p style="margin-top:24px;color:#94a3b8;font-size:14px">Nëse nuk e prisni këtë email, mund ta injoroni.</p>
   </div>`,
         });
-        emailSent = true;
+        if (resendError) {
+          console.error("[team-invite] Resend API error:", resendError);
+          emailError = resendError.message;
+        } else {
+          console.log("[team-invite] Email sent successfully, id:", emailData?.id);
+          emailSent = true;
+        }
       } catch (emailErr) {
-        console.error("Resend email error:", emailErr);
+        console.error("[team-invite] Resend exception:", emailErr);
+        emailError = emailErr instanceof Error ? emailErr.message : "Unknown error";
       }
     } else {
       console.warn(
-        "[team-invite] RESEND_API_KEY not set. Invite created but email not sent. Share link manually:",
+        "[team-invite] RESEND_API_KEY not set. Share link manually:",
         acceptUrl
       );
     }
 
-    return NextResponse.json({ invite, emailSent, acceptUrl });
+    return NextResponse.json({ invite, emailSent, acceptUrl, emailError });
   } catch (err) {
     console.error("Team POST error:", err);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });

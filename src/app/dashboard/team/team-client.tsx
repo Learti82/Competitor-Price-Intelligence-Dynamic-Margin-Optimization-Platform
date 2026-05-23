@@ -69,11 +69,13 @@ export function TeamClient({ initialMembers, initialInvites }: TeamClientProps) 
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Gabim");
       if (data.emailSent) {
-        toast.success(`Email u dërgua te ${inviteEmail}!`);
+        toast.success(`Email u dërgua me sukses te ${inviteEmail}!`);
       } else {
-        // No RESEND_API_KEY — show link to copy
         setAcceptLink(data.acceptUrl ?? "");
-        toast.info("Email nuk u dërgua (nuk ka RESEND_API_KEY). Kopjo linkun e fteesës poshtë.", { duration: 8000 });
+        const reason = data.emailError
+          ? `Gabim Resend: ${data.emailError}`
+          : "RESEND_API_KEY nuk është vendosur.";
+        toast.warning(`Email nuk u dërgua — ${reason} Kopjo linkun e ftesës poshtë.`, { duration: 10000 });
       }
       setInvites((prev) => [data.invite, ...prev]);
       setInviteEmail("");
@@ -248,7 +250,7 @@ export function TeamClient({ initialMembers, initialInvites }: TeamClientProps) 
                   Kopjo
                 </button>
               </div>
-              <p className="text-[10px] text-gray-600 mt-1">Shto RESEND_API_KEY në .env për dërgim automatik të emaileve.</p>
+              <p className="text-[10px] text-gray-600 mt-1">Dërgoje këtë link manualisht te personi i ftuar. Ai/ajo duhet të hyjë në PriceSync dhe të hapë këtë link për të pranuar ftesën.</p>
             </div>
           )}
         </CardContent>
