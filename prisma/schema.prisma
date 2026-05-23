@@ -36,6 +36,8 @@ model Company {
   auditLogs            AuditLog[]
   pricingRules         PricingRule[]
   promotions           Promotion[]
+  scraperRuns          ScraperRun[]
+  teamInvites          TeamInvite[]
 
   @@map("companies")
 }
@@ -82,8 +84,9 @@ model Store {
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
 
-  company     Company        @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  pricePoints ProductPrice[]
+  company             Company              @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  pricePoints         ProductPrice[]
+  storeProductPrices  StoreProductPrice[]
 
   @@map("stores")
 }
@@ -143,13 +146,14 @@ model Product {
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
 
-  company            Company               @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  pricePoints        ProductPrice[]
-  competitorMappings CompetitorProductMap[]
-  recommendations    PriceRecommendation[]
-  alerts             MarginAlert[]
-  pricingRules       PricingRule[]
-  promotions         Promotion[]
+  company             Company               @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  pricePoints         ProductPrice[]
+  competitorMappings  CompetitorProductMap[]
+  recommendations     PriceRecommendation[]
+  alerts              MarginAlert[]
+  pricingRules        PricingRule[]
+  promotions          Promotion[]
+  storeProductPrices  StoreProductPrice[]
 
   @@unique([companyId, sku])
   @@map("products")
@@ -457,4 +461,50 @@ model Promotion {
   product Product? @relation(fields: [productId], references: [id])
 
   @@map("promotions")
+}
+
+// ─── Scraper Runs ─────────────────────────────────────────────────────────────
+
+model ScraperRun {
+  id           String    @id @default(cuid())
+  companyId    String
+  status       String    @default("RUNNING")
+  itemsScraped Int       @default(0)
+  log          String[]
+  startedAt    DateTime  @default(now())
+  completedAt  DateTime?
+  company      Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@map("scraper_runs")
+}
+
+// ─── Store Product Prices ─────────────────────────────────────────────────────
+
+model StoreProductPrice {
+  id        String   @id @default(cuid())
+  storeId   String
+  productId String
+  price     Float
+  updatedAt DateTime @updatedAt
+  store     Store    @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([storeId, productId])
+  @@map("store_product_prices")
+}
+
+// ─── Team Invites ─────────────────────────────────────────────────────────────
+
+model TeamInvite {
+  id        String    @id @default(cuid())
+  companyId String
+  email     String
+  role      UserRole  @default(ANALYST)
+  token     String    @unique @default(cuid())
+  accepted  Boolean   @default(false)
+  createdAt DateTime  @default(now())
+  expiresAt DateTime
+  company   Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@map("team_invites")
 }
