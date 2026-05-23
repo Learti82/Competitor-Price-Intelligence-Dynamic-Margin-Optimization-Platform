@@ -17,7 +17,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <ClerkProvider>
       <html lang="sq" suppressHydrationWarning>
-        <body className={`${inter.className} h-full antialiased bg-gray-950 text-gray-100`}>
+        <body suppressHydrationWarning className={`${inter.className} h-full antialiased bg-gray-950 text-gray-100`}>
           <ThemeProvider>
             {children}
             <Toaster richColors position="top-right" />
