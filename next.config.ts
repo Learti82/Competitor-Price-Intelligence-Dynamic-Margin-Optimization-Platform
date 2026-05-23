@@ -10,6 +10,9 @@ const nextConfig: NextConfig = {
   experimental: {
     serverActions: { allowedOrigins: ["localhost:3000"] },
   },
+  turbopack: {
+    root: __dirname,
+  },
 };
 
 export default nextConfig;
