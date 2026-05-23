@@ -32,6 +32,7 @@ const navItems = [
 
 const intelligenceItems = [
   { label: "Asistenti AI", href: "/dashboard/chat", icon: Bot, badge: "AI", badgeVariant: "info" as const },
+  { label: "Çmimet Live", href: "/dashboard/competitor-prices", icon: DollarSign, badge: "LIVE", badgeVariant: "success" as const },
   { label: "Simulatori", href: "/dashboard/simulator", icon: GitCompare },
   { label: "Vëzhguesi Konkurrentëve", href: "/dashboard/competitor-watch", icon: RefreshCw },
   { label: "Kategoritë", href: "/dashboard/category-stats", icon: PieChart },
@@ -145,8 +146,13 @@ export function Sidebar() {
       {/* Bottom */}
       <div className="border-t border-gray-800 p-3 space-y-1">
         <Link href="/dashboard/settings" onClick={() => setMobileOpen(false)}
-          className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-400 hover:bg-gray-800 hover:text-gray-100 transition-colors">
-          <Settings className="h-4 w-4 text-gray-500" />
+          className={cn(
+            "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+            pathname.startsWith("/dashboard/settings")
+              ? "bg-blue-600/10 text-blue-400 border border-blue-500/20"
+              : "text-gray-400 hover:bg-gray-800 hover:text-gray-100"
+          )}>
+          <Settings className={cn("h-4 w-4", pathname.startsWith("/dashboard/settings") ? "text-blue-400" : "text-gray-500")} />
           <span>Cilësimet</span>
         </Link>
         <div className="flex items-center gap-3 rounded-lg px-3 py-2">
