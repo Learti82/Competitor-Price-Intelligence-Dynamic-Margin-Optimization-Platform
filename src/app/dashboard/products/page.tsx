@@ -2,6 +2,7 @@ import { requireCompany } from "@/lib/get-company";
 import { Header } from "@/components/layout/header";
 import { ProductsTable } from "@/components/dashboard/products-table";
 import { ExportButton } from "@/components/ui/export-button";
+import { BulkUpdateModal } from "@/components/dashboard/bulk-update-modal";
 import { db } from "@/lib/db";
 
 async function getProducts(search?: string) {
@@ -59,7 +60,12 @@ export default async function ProductsPage({
             ? `${products.length} rezultate për "${q}"`
             : `${products.length} SKU aktive • Rendosur sipas marzhit (më i ulëti i pari)`
         }
-        actions={<ExportButton type="products" label="Eksporto Excel" />}
+        actions={
+          <div className="flex items-center gap-2">
+            <BulkUpdateModal productIds={products.map((p) => p.id)} />
+            <ExportButton type="products" label="Eksporto Excel" />
+          </div>
+        }
       />
       <div className="p-6">
         {q && products.length === 0 && (
