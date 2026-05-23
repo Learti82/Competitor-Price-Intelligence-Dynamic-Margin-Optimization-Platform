@@ -94,6 +94,15 @@ export function SimulatorClient({ products }: SimulatorClientProps) {
 
   return (
     <div className="p-6 space-y-6">
+      <div className="mx-6 mt-4 rounded-lg border border-gray-800 bg-gray-900/50 px-4 py-3 text-xs text-gray-500 flex items-start gap-2">
+        <span className="text-blue-400 mt-0.5">ℹ</span>
+        <span>
+          <strong className="text-gray-400">Si ta përdorni:</strong> Zgjidhni një produkt, futni çmimin e ri dhe numrin e njësive të shitura në ditë.{" "}
+          Simulatori llogarit ndikimin në të ardhura dhe marzh para se të bëni ndonjë ndryshim real.
+          <strong className="text-gray-400"> Shembull:</strong> Nëse shisni 50 copë Coca-Cola në ditë me €1.15, dhe ngrisni çmimin në €1.25 (+8.7%),{" "}
+          shihni nëse klientët do të pranojnë rritjen.
+        </span>
+      </div>
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         {/* Left panel */}
         <Card className="bg-gray-900 border-gray-800">

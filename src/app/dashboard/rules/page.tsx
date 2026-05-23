@@ -103,6 +103,17 @@ export default function RulesPage() {
           </Button>
         }
       />
+      <div className="px-6 py-4">
+        <div className="rounded-lg border border-gray-800 bg-gray-900/50 px-4 py-3 text-xs text-gray-500 flex items-start gap-2">
+          <span className="text-blue-400 mt-0.5">ℹ</span>
+          <span>
+            <strong className="text-gray-400">Rregullat automatike:</strong> Vendosni rregulla si{" "}
+            <em>&quot;qëndro gjithmonë 3% nën Plus Market&quot;</em> ose{" "}
+            <em>&quot;mos shko kurrë nën 8% marzh në bulmet&quot;</em>.
+            Sistemi i zbaton automatikisht kur gjeneron rekomandime të reja. Rregullat me prioritet më të lartë zbatohen të parët.
+          </span>
+        </div>
+      </div>
       <div className="p-6 space-y-6">
         {/* Info banner */}
         <Card className="bg-blue-600/10 border-blue-500/30">
