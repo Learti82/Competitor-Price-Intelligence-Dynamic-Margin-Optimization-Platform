@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Plus, Calendar, ChevronLeft, ChevronRight, Tag } from "lucide-react";
 import { toast } from "sonner";
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isToday, isSameDay, addMonths, subMonths, parseISO } from "date-fns";
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isToday, addMonths, subMonths, parseISO, differenceInDays } from "date-fns";
 
 interface Promotion {
   id: string;
@@ -173,6 +173,57 @@ export default function PromotionsPage() {
               </Card>
             ))}
           </div>
+        </div>
+
+        {/* ROI Tracker */}
+        <div className="mt-6">
+          <h3 className="text-base font-semibold text-white mb-4">ROI Tracker</h3>
+          {promotions.filter((p) => p.status === "COMPLETED").length === 0 ? (
+            <p className="text-sm text-gray-500">Nuk ka promovime të përfunduara ende.</p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {promotions
+                .filter((p) => p.status === "COMPLETED")
+                .map((p) => {
+                  const days = Math.max(1, differenceInDays(parseISO(p.endDate), parseISO(p.startDate)));
+                  const avgPrice = 2.5; // rough average product price in EUR
+                  const impact =
+                    p.discountType === "PERCENTAGE"
+                      ? (p.discountValue / 100) * avgPrice * 100 * days
+                      : p.discountType === "ABSOLUTE"
+                      ? p.discountValue * 100 * days
+                      : avgPrice * 100 * days;
+                  const isPositive = impact > 0;
+                  return (
+                    <Card key={p.id} className="bg-gray-900 border-gray-800">
+                      <CardContent className="p-4">
+                        <div className="flex items-start justify-between mb-2">
+                          <p className="text-xs font-semibold text-white leading-snug flex-1 mr-2">{p.title}</p>
+                          <span className={`text-[11px] px-2 py-0.5 rounded-full border font-semibold flex-shrink-0 ${isPositive ? "bg-green-500/20 text-green-400 border-green-500/30" : "bg-red-500/20 text-red-400 border-red-500/30"}`}>
+                            {isPositive ? "Pozitiv" : "Negativ"}
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-gray-500 mb-3">{p.productName}</p>
+                        <div className="space-y-1.5 text-[11px]">
+                          <div className="flex justify-between">
+                            <span className="text-gray-500">Zbritja:</span>
+                            <span className="text-green-400 font-medium">{getDiscountLabel(p)}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-500">Kohëzgjatja:</span>
+                            <span className="text-gray-300">{days} ditë</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-500">Impakti est.:</span>
+                            <span className="text-white font-semibold">€{impact.toFixed(2)}</span>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+            </div>
+          )}
         </div>
 
         {/* Add form modal */}
