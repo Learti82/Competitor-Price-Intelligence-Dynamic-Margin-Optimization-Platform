@@ -1,13 +1,21 @@
 import { requireCompany } from "@/lib/get-company";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { scrapeVivaFresh } from "@/lib/scrapers/viva-fresh";
+import { ProductCategory } from "@prisma/client";
+
+const VIVA_FRESH_SLUG = "viva-fresh";
+
+function toProductCategory(cat: string): ProductCategory {
+  const valid = Object.values(ProductCategory) as string[];
+  return valid.includes(cat) ? (cat as ProductCategory) : ProductCategory.SNACKS_CONFECTIONERY;
+}
 
 export async function POST(_req: NextRequest) {
   try {
     const company = await requireCompany();
     if (!company) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    // Create a ScraperRun record with status RUNNING
     const run = await db.scraperRun.create({
       data: {
         companyId: company.id,
@@ -16,62 +24,82 @@ export async function POST(_req: NextRequest) {
       },
     });
 
-    // Get all competitor products linked to this company's competitors
-    const companyCompetitors = await db.companyCompetitor.findMany({
-      where: { companyId: company.id, isTracked: true },
-      select: { competitorId: true },
-    });
-
-    const competitorIds = companyCompetitors.map((c) => c.competitorId);
-
-    const competitorProducts = await db.competitorProduct.findMany({
-      where: {
-        competitorId: { in: competitorIds },
-        isAvailable: true,
-      },
-      include: {
-        prices: {
-          orderBy: { recordedAt: "desc" },
-          take: 1,
-        },
-      },
-    });
-
-    const logEntries: string[] = [
-      `Scraper started at ${new Date().toISOString()}`,
-      `Found ${competitorProducts.length} competitor products to scrape`,
-    ];
-
-    // For each competitor product, create a new CompetitorPrice with a randomly adjusted price
+    const logEntries: string[] = [`Scraper started at ${new Date().toISOString()}`];
     let itemsScraped = 0;
-    for (const cp of competitorProducts) {
-      const lastPrice = cp.prices[0]?.price ?? null;
-      let newPrice: number;
 
-      if (lastPrice !== null) {
-        // ±3% of last price
-        const fluctuation = (Math.random() * 0.06 - 0.03);
-        newPrice = Math.round(lastPrice * (1 + fluctuation) * 100) / 100;
-      } else {
-        // Random price between €1.00 and €5.00 if no previous price
-        newPrice = Math.round((1 + Math.random() * 4) * 100) / 100;
-      }
+    // Get or create Viva Fresh competitor
+    let vivaFresh = await db.competitor.findUnique({ where: { slug: VIVA_FRESH_SLUG } });
+    if (!vivaFresh) {
+      vivaFresh = await db.competitor.create({
+        data: {
+          name: "Viva Fresh",
+          slug: VIVA_FRESH_SLUG,
+          hqCity: "Prishtinë",
+          numberOfStores: 22,
+          pricingStrategy: "HiLo",
+          websiteUrl: "https://online.vivafresh.shop",
+          isActive: true,
+        },
+      });
+      logEntries.push("Created Viva Fresh competitor");
+    }
+
+    // Ensure company tracks Viva Fresh
+    await db.companyCompetitor.upsert({
+      where: { companyId_competitorId: { companyId: company.id, competitorId: vivaFresh.id } },
+      update: {},
+      create: { companyId: company.id, competitorId: vivaFresh.id, isTracked: true },
+    });
+
+    logEntries.push("Scraping Viva Fresh online shop...");
+
+    const { products, log: scraperLog, pagesScraped } = await scrapeVivaFresh(3);
+    logEntries.push(...scraperLog);
+    logEntries.push(`Pages scraped: ${pagesScraped}, products found: ${products.length}`);
+
+    if (products.length === 0) {
+      logEntries.push("WARNING: No products scraped. CSS selectors may need updating.");
+      logEntries.push("Open https://online.vivafresh.shop, right-click a product → Inspect, and update SELECTORS in src/lib/scrapers/viva-fresh.ts");
+    }
+
+    // Save products and prices to DB
+    for (const p of products) {
+      const competitorProduct = await db.competitorProduct.upsert({
+        where: { competitorId_name: { competitorId: vivaFresh.id, name: p.name } },
+        update: {
+          isAvailable: true,
+          lastSeenAt: new Date(),
+          ...(p.brand ? { brand: p.brand } : {}),
+        },
+        create: {
+          competitorId: vivaFresh.id,
+          name: p.name,
+          brand: p.brand,
+          category: toProductCategory(p.category),
+          sku: p.sku,
+          isAvailable: true,
+          lastSeenAt: new Date(),
+        },
+      });
 
       await db.competitorPrice.create({
         data: {
-          competitorProductId: cp.id,
-          price: newPrice,
+          competitorProductId: competitorProduct.id,
+          price: p.price,
+          promotionalPrice: p.isOnPromotion ? p.originalPrice : null,
+          isOnPromotion: p.isOnPromotion,
           source: "WEB_SCRAPE",
+          sourceUrl: p.sourceUrl,
+          recordedAt: new Date(),
         },
       });
 
       itemsScraped++;
     }
 
-    logEntries.push(`Scraped ${itemsScraped} prices`);
-    logEntries.push(`Scraper completed at ${new Date().toISOString()}`);
+    logEntries.push(`Saved ${itemsScraped} price records`);
+    logEntries.push(`Completed at ${new Date().toISOString()}`);
 
-    // Update ScraperRun to COMPLETED
     await db.scraperRun.update({
       where: { id: run.id },
       data: {
@@ -82,10 +110,10 @@ export async function POST(_req: NextRequest) {
       },
     });
 
-    return NextResponse.json({ success: true, itemsScraped, runId: run.id });
+    return NextResponse.json({ success: true, itemsScraped, runId: run.id, log: logEntries });
   } catch (err) {
     console.error("Scraper POST error:", err);
-    return NextResponse.json({ error: "Internal error" }, { status: 500 });
+    return NextResponse.json({ error: "Internal error", details: String(err) }, { status: 500 });
   }
 }
 
@@ -97,7 +125,7 @@ export async function GET(_req: NextRequest) {
     const runs = await db.scraperRun.findMany({
       where: { companyId: company.id },
       orderBy: { startedAt: "desc" },
-      take: 10,
+      take: 20,
     });
 
     return NextResponse.json({ runs });
