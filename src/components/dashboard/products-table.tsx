@@ -6,7 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { formatCurrency, formatPercent, categoryLabel, getMarginColor } from "@/lib/utils";
-import { Search, TrendingUp, TrendingDown, Minus } from "lucide-react";
+import { Search, TrendingUp, TrendingDown, Minus, ExternalLink } from "lucide-react";
+import Link from "next/link";
 
 interface Product {
   id: string;
@@ -113,8 +114,11 @@ export function ProductsTable({ products }: { products: Product[] }) {
                     className="border-b border-gray-800/50 hover:bg-gray-800/30 transition-colors"
                   >
                     <td className="px-4 py-3">
-                      <div>
-                        <p className="font-medium text-white">{product.name}</p>
+                      <div className="group">
+                        <Link href={`/dashboard/products/${product.id}`} className="inline-flex items-center gap-1.5 hover:text-blue-400 transition-colors">
+                          <p className="font-medium text-white group-hover:text-blue-400">{product.name}</p>
+                          <ExternalLink className="h-3 w-3 text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </Link>
                         <p className="text-xs text-gray-500">
                           {product.brand && `${product.brand} • `}
                           <span className="font-mono">{product.sku}</span>
