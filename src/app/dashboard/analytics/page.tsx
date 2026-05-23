@@ -1,12 +1,14 @@
+import { requireCompany } from "@/lib/get-company";
 import { Header } from "@/components/layout/header";
 import { AnalyticsDashboard } from "@/components/dashboard/analytics-dashboard";
+import { MarketPositionChart } from "@/components/dashboard/market-position-chart";
+import { ElasticityChart } from "@/components/dashboard/elasticity-chart";
+import { ExportButton } from "@/components/ui/export-button";
 import { db } from "@/lib/db";
 import { subDays } from "date-fns";
 
 async function getAnalyticsData() {
-  const company = await db.company.findFirst({
-    where: { clerkOrgId: "demo_org_markal" },
-  });
+  const company = await requireCompany();
   if (!company) return null;
 
   const since = subDays(new Date(), 30);
@@ -73,13 +75,21 @@ export default async function AnalyticsPage() {
 
   return (
     <div className="flex flex-col">
-      <Header title="Analitika" subtitle="Analizë e thellë e performancës së marzhit" />
-      <div className="p-6">
+      <Header
+        title="Analitika"
+        subtitle="Analizë e thellë e performancës së marzhit"
+        actions={<ExportButton type="products" label="Eksporto Excel" />}
+      />
+      <div className="p-6 space-y-6">
         {data ? (
           <AnalyticsDashboard data={data} />
         ) : (
           <div className="text-center text-gray-500 py-16">Nuk u gjet kompania.</div>
         )}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+          <MarketPositionChart />
+          <ElasticityChart />
+        </div>
       </div>
     </div>
   );

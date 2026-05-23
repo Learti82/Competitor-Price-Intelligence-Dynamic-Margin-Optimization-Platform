@@ -1,11 +1,10 @@
+import { requireCompany } from "@/lib/get-company";
 import { Header } from "@/components/layout/header";
 import { CompetitorsGrid } from "@/components/dashboard/competitors-grid";
 import { db } from "@/lib/db";
 
 async function getCompetitors() {
-  const company = await db.company.findFirst({
-    where: { clerkOrgId: "demo_org_markal" },
-  });
+  const company = await requireCompany();
   if (!company) return [];
 
   const competitors = await db.competitor.findMany({

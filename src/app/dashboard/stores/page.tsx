@@ -1,3 +1,4 @@
+import { requireCompany } from "@/lib/get-company";
 import { Header } from "@/components/layout/header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -6,9 +7,7 @@ import { Store, MapPin, Ruler } from "lucide-react";
 import { db } from "@/lib/db";
 
 async function getStores() {
-  const company = await db.company.findFirst({
-    where: { clerkOrgId: "demo_org_markal" },
-  });
+  const company = await requireCompany();
   if (!company) return [];
 
   return db.store.findMany({

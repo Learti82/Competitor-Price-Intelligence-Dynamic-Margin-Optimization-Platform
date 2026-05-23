@@ -106,6 +106,15 @@ export function RecommendationsPanel({ pending, applied, totalOpportunity }: Pro
         </div>
       </div>
 
+      <div className="rounded-lg border border-gray-800 bg-gray-900/50 px-4 py-3 text-xs text-gray-500 flex items-start gap-2">
+        <span className="text-blue-400 mt-0.5">ℹ</span>
+        <span>
+          <strong className="text-gray-400">Si funksionon:</strong> Motori AI analizon çmimet e konkurrentëve dhe COGS-in tuaj çdo ditë.{" "}
+          Kur gjen mundësi optimizimi (p.sh. jemi 8% nën çmimin e tregut), gjeneron rekomandim me nivel besueshmërie.{" "}
+          Klikoni <strong className="text-gray-400">&quot;Zbato Çmimin&quot;</strong> për ta aplikuar direkt, ose <strong className="text-gray-400">&quot;Refuzo&quot;</strong> nëse nuk pajtoheni.
+        </span>
+      </div>
+
       <Tabs defaultValue="pending">
         <TabsList className="bg-gray-800">
           <TabsTrigger value="pending" className="data-[state=active]:bg-gray-700">

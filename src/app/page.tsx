@@ -15,12 +15,20 @@ export default function LandingPage() {
               <span className="ml-1 text-lg font-light text-blue-400">Manager</span>
             </div>
           </div>
-          <Link
-            href="/dashboard"
-            className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
-          >
-            Hyr në Panel <ArrowRight className="h-4 w-4" />
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/sign-in"
+              className="rounded-lg border border-gray-700 px-4 py-2 text-sm font-medium text-gray-300 hover:bg-gray-800 transition-colors"
+            >
+              Hyr
+            </Link>
+            <Link
+              href="/sign-up"
+              className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
+            >
+              Regjistrohu <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
         </div>
       </nav>
 
@@ -38,12 +46,20 @@ export default function LandingPage() {
             Platforma e parë e Inteligjencës Konkurruese të Çmimeve për zinxhirët kosovarë.
             Monitoroni 15 konkurrentë, optimizoni marzhit me AI, dhe mos humbni asnjë mundësi çmimi.
           </p>
-          <Link
-            href="/dashboard"
-            className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-8 py-4 text-base font-semibold text-white hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/20"
-          >
-            Shiko Demo Live <ArrowRight className="h-5 w-5" />
-          </Link>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link
+              href="/sign-up"
+              className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-8 py-4 text-base font-semibold text-white hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/20"
+            >
+              Fillo Falas <ArrowRight className="h-5 w-5" />
+            </Link>
+            <Link
+              href="/sign-in"
+              className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-8 py-4 text-base font-semibold text-gray-300 hover:bg-gray-800 transition-colors"
+            >
+              Hyr në Llogari
+            </Link>
+          </div>
         </div>
       </section>
 

@@ -5,16 +5,14 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatCurrency(amount: number, currency = "EUR") {
-  return new Intl.NumberFormat("sq-AL", {
-    style: "currency",
-    currency,
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(amount);
+export function formatCurrency(amount: number | undefined | null, currency = "EUR") {
+  if (amount == null || isNaN(amount)) return "—";
+  const symbol = currency === "EUR" ? "€" : currency;
+  return `${symbol}${amount.toFixed(2)}`;
 }
 
-export function formatPercent(value: number, decimals = 1) {
+export function formatPercent(value: number | undefined | null, decimals = 1) {
+  if (value == null || isNaN(value)) return "—";
   return `${value.toFixed(decimals)}%`;
 }
 
@@ -32,7 +30,8 @@ export function calcPrice(cogs: number, marginPct: number): number {
   return cogs / (1 - marginPct / 100);
 }
 
-export function getMarginColor(margin: number): string {
+export function getMarginColor(margin: number | undefined | null): string {
+  if (margin == null || isNaN(margin)) return "text-gray-500";
   if (margin < 3) return "text-red-500";
   if (margin < 8) return "text-yellow-500";
   if (margin < 15) return "text-green-500";

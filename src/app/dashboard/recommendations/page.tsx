@@ -1,11 +1,11 @@
+import { requireCompany } from "@/lib/get-company";
 import { Header } from "@/components/layout/header";
 import { RecommendationsPanel } from "@/components/dashboard/recommendations-panel";
+import { ExportButton } from "@/components/ui/export-button";
 import { db } from "@/lib/db";
 
 async function getRecommendations() {
-  const company = await db.company.findFirst({
-    where: { clerkOrgId: "demo_org_markal" },
-  });
+  const company = await requireCompany();
   if (!company) return { pending: [], applied: [], totalOpportunity: 0 };
 
   const [pending, applied] = await Promise.all([
@@ -46,6 +46,7 @@ export default async function RecommendationsPage() {
       <Header
         title="Rekomandimet e Marzhit AI"
         subtitle={`${data.pending.length} aktive • Mundësi: €${data.totalOpportunity.toFixed(0)}/ditë`}
+        actions={<ExportButton type="recommendations" label="Eksporto Excel" />}
       />
       <div className="p-6">
         <RecommendationsPanel
