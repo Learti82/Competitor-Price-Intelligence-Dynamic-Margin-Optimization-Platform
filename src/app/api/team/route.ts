@@ -1,8 +1,17 @@
-import { requireCompany } from "@/lib/get-company";
+import { requireCompany, getActorName } from "@/lib/get-company";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
 import { UserRole } from "@prisma/client";
+import { Resend } from "resend";
+
+const ROLE_LABELS: Record<string, string> = {
+  ADMIN: "Administrator",
+  PRICING_MANAGER: "Menaxher Çmimesh",
+  REGIONAL_MANAGER: "Menaxher Rajonal",
+  ANALYST: "Analist",
+  VIEWER: "Vëzhgues",
+};
 
 export async function GET(_req: NextRequest) {
   try {
@@ -50,7 +59,42 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return NextResponse.json({ invite });
+    let emailSent = false;
+    const actorName = await getActorName();
+    const roleLabel = ROLE_LABELS[role] ?? role;
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+    const acceptUrl = `${appUrl}/accept-invite?token=${invite.token}`;
+
+    if (process.env.RESEND_API_KEY) {
+      try {
+        const resend = new Resend(process.env.RESEND_API_KEY);
+        await resend.emails.send({
+          from: "PriceSync <onboarding@resend.dev>",
+          to: invite.email,
+          subject: `${actorName} ju ftoi në ${company.name} në PriceSync Manager`,
+          html: `<div style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:32px;background:#0f172a;color:#fff;border-radius:12px">
+    <h2 style="color:#60a5fa">Ftesë për PriceSync Manager</h2>
+    <p>${actorName} ju ftoi t'i bashkoheni kompanisë <strong>${company.name}</strong> si <strong>${roleLabel}</strong>.</p>
+    <p>Kjo ftesë skadon në 7 ditë.</p>
+    <a href="${acceptUrl}"
+       style="display:inline-block;background:#2563eb;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600">
+       Prano Ftesën
+    </a>
+    <p style="margin-top:24px;color:#94a3b8;font-size:14px">Nëse nuk e prisni këtë email, mund ta injoroni.</p>
+  </div>`,
+        });
+        emailSent = true;
+      } catch (emailErr) {
+        console.error("Resend email error:", emailErr);
+      }
+    } else {
+      console.warn(
+        "[team-invite] RESEND_API_KEY not set. Invite created but email not sent. Share link manually:",
+        acceptUrl
+      );
+    }
+
+    return NextResponse.json({ invite, emailSent, acceptUrl });
   } catch (err) {
     console.error("Team POST error:", err);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
