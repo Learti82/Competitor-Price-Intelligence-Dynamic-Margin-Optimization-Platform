@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
       try {
         const resend = new Resend(process.env.RESEND_API_KEY);
         const { data: emailData, error: resendError } = await resend.emails.send({
-          from: "PriceSync <onboarding@resend.dev>",
+          from: process.env.RESEND_FROM_EMAIL ?? "PriceSync <onboarding@resend.dev>",
           to: invite.email,
           subject: `${actorName} ju ftoi në ${company.name} në PriceSync Manager`,
           html: `<div style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:32px;background:#0f172a;color:#fff;border-radius:12px">
