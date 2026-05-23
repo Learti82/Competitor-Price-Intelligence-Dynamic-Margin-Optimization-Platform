@@ -54,6 +54,7 @@ export function TeamClient({ initialMembers, initialInvites }: TeamClientProps) 
   const [inviteRole, setInviteRole] = useState("ANALYST");
   const [inviting, setInviting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [acceptLink, setAcceptLink] = useState("");
 
   async function handleInvite(e: React.FormEvent) {
     e.preventDefault();
@@ -67,7 +68,13 @@ export function TeamClient({ initialMembers, initialInvites }: TeamClientProps) 
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Gabim");
-      toast.success(`Ftesa u dërgua te ${inviteEmail}`);
+      if (data.emailSent) {
+        toast.success(`Email u dërgua te ${inviteEmail}!`);
+      } else {
+        // No RESEND_API_KEY — show link to copy
+        setAcceptLink(data.acceptUrl ?? "");
+        toast.info("Email nuk u dërgua (nuk ka RESEND_API_KEY). Kopjo linkun e fteesës poshtë.", { duration: 8000 });
+      }
       setInvites((prev) => [data.invite, ...prev]);
       setInviteEmail("");
     } catch (err: unknown) {
@@ -224,6 +231,26 @@ export function TeamClient({ initialMembers, initialInvites }: TeamClientProps) 
               {inviting ? "Duke dërguar..." : "Dërgo Ftesë"}
             </Button>
           </form>
+          {acceptLink && (
+            <div className="mt-3 rounded-lg border border-blue-500/30 bg-blue-500/10 p-3">
+              <p className="text-xs text-blue-400 mb-2 font-medium">Linku i ftesës (kopjo dhe dërgoje manualisht):</p>
+              <div className="flex items-center gap-2">
+                <input
+                  readOnly
+                  value={acceptLink}
+                  className="flex-1 rounded bg-gray-800 border border-gray-700 px-2 py-1.5 text-xs text-gray-300 font-mono"
+                  onClick={(e) => (e.target as HTMLInputElement).select()}
+                />
+                <button
+                  onClick={() => { navigator.clipboard.writeText(acceptLink); toast.success("U kopjua!"); }}
+                  className="text-xs text-blue-400 hover:text-blue-300 px-2 py-1.5 border border-blue-500/30 rounded"
+                >
+                  Kopjo
+                </button>
+              </div>
+              <p className="text-[10px] text-gray-600 mt-1">Shto RESEND_API_KEY në .env për dërgim automatik të emaileve.</p>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

@@ -23,7 +23,7 @@ export default async function CompetitorPricesPage({ searchParams }: PageProps) 
       <div className="flex flex-col">
         <Header
           title="Çmimet Live të Konkurrentëve"
-          subtitle="Krahaso çmimet tona me të gjithë konkurrentët në kohë reale"
+          subtitle="Krahaso çmimet tona me konkurrentët • E gjeshme = jemi nën tregun (mund të rrisim çmimin) • Mesatar = jemi në linjë me tregun"
         />
         <div className="p-6 text-sm text-gray-400">Nuk u gjet kompania juaj.</div>
       </div>
@@ -188,7 +188,7 @@ export default async function CompetitorPricesPage({ searchParams }: PageProps) 
     <div className="flex flex-col">
       <Header
         title="Çmimet Live të Konkurrentëve"
-        subtitle="Krahaso çmimet tona me të gjithë konkurrentët në kohë reale"
+        subtitle="Krahaso çmimet tona me konkurrentët • E gjeshme = jemi nën tregun (mund të rrisim çmimin) • Mesatar = jemi në linjë me tregun"
       />
       <div className="p-6 space-y-6">
         {/* Stats row */}

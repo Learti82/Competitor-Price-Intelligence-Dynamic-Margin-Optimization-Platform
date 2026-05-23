@@ -184,7 +184,8 @@ export function StorePricesClient({ stores, products, initialOverrides }: StoreP
                 </thead>
                 <tbody>
                   {overrides.map((ov) => {
-                    const diff = ((ov.price - ov.product.currentPrice) / ov.product.currentPrice) * 100;
+                    const basePrice = ov.product.currentPrice ?? 0;
+                    const diff = basePrice > 0 ? ((ov.price - basePrice) / basePrice) * 100 : 0;
                     const diffColor = diff > 0 ? "text-green-400" : diff < 0 ? "text-red-400" : "text-gray-400";
                     return (
                       <tr key={ov.id} className="border-b border-gray-800/50 last:border-0">
@@ -197,7 +198,7 @@ export function StorePricesClient({ stores, products, initialOverrides }: StoreP
                           {formatCurrency(ov.product.currentPrice)}
                         </td>
                         <td className={`py-3 pr-4 text-xs font-medium ${diffColor}`}>
-                          {diff > 0 ? "+" : ""}{diff.toFixed(1)}%
+                          {basePrice > 0 ? `${diff > 0 ? "+" : ""}${diff.toFixed(1)}%` : "—"}
                         </td>
                         <td className="py-3">
                           <Button
